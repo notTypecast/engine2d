@@ -9,29 +9,33 @@ class Vector:
 		self.x = x
 		self.y = y
 
+	@classmethod
 	def __neg__(self):
-		return Vector(Point(-self.x, -self.y))
+		return type(self)(Point(-self.x, -self.y))
+
+	def __abs__(self):
+		return (self.x**2 + self.y**2)**.5
 
 	def __add__(self, other):
-		if type(other) is Vector:
-			return Vector(Point(self.x + other.x, self.y + other.y))
+		if isinstance(other, Vector):
+			return type(self)(Point(self.x + other.x, self.y + other.y))
 		else:
-			return Vector(Point(self.x + other, self.y + other))
+			return type(self)(Point(self.x + other, self.y + other))
 
 	def __sub__(self, other):
 		return self + (-other)
 
 	def __mul__(self, other):
-		if type(other) is Vector:
-			return Vector(Point(self.x*other.x, self.y*other.y))
+		if isinstance(other, Vector):
+			return type(self)(Point(self.x*other.x, self.y*other.y))
 		else:
-			return Vector(Point(self.x*other, self.y*other))
+			return type(self)(Point(self.x*other, self.y*other))
 
 	def __truediv__(self, other):
-		if type(other) is Vector:
-			return Vector(Point(self.x/other.x, self.y/other.y))
+		if isinstance(other, Vector):
+			return type(self)(Point(self.x/other.x, self.y/other.y))
 		else:
-			return Vector(Point(self.x/other, self.y/other))
+			return type(self)(Point(self.x/other, self.y/other))
 
 	def __str__(self):
 		return "(" + str(self.x) + "," + str(self.y) + ")"

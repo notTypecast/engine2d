@@ -6,28 +6,28 @@ class Point:
 		self.y = y
 
 	def __neg__(self):
-		return Point(-self.x, -self.y)
+		return type(self)(-self.x, -self.y)
 
 	def __add__(self, other):
 		if isinstance(other, Number):
-			return Point(self.x + other, self.y + other)
+			return type(self)(self.x + other, self.y + other)
 		else:
-			return Point(self.x + other.x, self.y + other.y)
+			return type(self)(self.x + other.x, self.y + other.y)
 
 	def __sub__(self, other):
 		return self + (-other)
 
 	def __mul__(self, other):
 		if isinstance(other, Number):
-			return Point(self.x*other, self.y*other)
+			return type(self)(self.x*other, self.y*other)
 		else:
-			return Point(self.x*other.x, self.y*other.y)
+			return type(self)(self.x*other.x, self.y*other.y)
 
 	def __truediv__(self, other):
 		if isinstance(other, Number):
-			return Point(self.x/other, self.y/other)
+			return type(self)(self.x/other, self.y/other)
 		else:
-			return Point(self.x/other.x, self.y/other.y)
+			return type(self)(self.x/other.x, self.y/other.y)
 
 	def __str__(self):
 		return "(" + str(self.x) + "," + str(self.y) + ")"
