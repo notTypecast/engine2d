@@ -10,6 +10,7 @@ class Screen:
 	Represents the terminal window screen
 	'''
 
+	#MASS_REPR: Maps each type of mass to its corresponding character representation
 	MASS_REPR = {Mass: "m", PointMass: "•", UniformSquareMass: ("■", "◆")}
 
 	#Matrix: RxC representing the screen, where R: rows and C: columns

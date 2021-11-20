@@ -6,11 +6,18 @@ from src.VerticalToPlaneVector import VerticalToPlaneVector
 from math import sin, copysign
 
 class UniformSquareMass(Mass):
-
-	SQUARE = "■"
-	SQUARE_ROT = "◆"
+	'''
+	UniformSquareMass class, implements Mass
+	Defines a square on the plane with a given side and mass, whose mass is uniformly distributed
+	Forces being added to the square can cause torque and rotate the object
+	'''
 
 	def __init__(self, mass, side, position = Point(0, 0), rotationAngle = 0):
+		'''
+		Constructor
+		Initializes a new uniform mass square with a given mass and side
+		position and rotationAngle represent initial values
+		'''
 		super().__init__(mass, position)
 		self.side = side
 		self.momentOfInertia = side**4/12
@@ -18,10 +25,20 @@ class UniformSquareMass(Mass):
 		self.angularSpeed = 0
 
 	def addForce(self, x, y, xPercentageOnMass, yPercentageOnMass):
+		'''
+		Adds a new force on the object
+		The force vector is (x, y), while xPercentageOnMass and yPercentageOnMass represent the
+		point on the square, where the force acts (actual point can be calculated as such:
+		(side*xPercentageOnMass, side*yPercentageOnMass))
+		'''
 		forceVector = ForceVector(Point(x, y), Point(xPercentageOnMass, yPercentageOnMass))
 		self.forces.append(forceVector)
 
 	def getTorqueSumVector(self):
+		'''
+		Returns a vector, representing the sum of all torques caused by forces on this object
+		The vector is vertical to the 2D plane, therefore VerticalToPlaneVector represents it
+		'''
 		torqueSumVector = VerticalToPlaneVector(0)
 
 		for forceVector in self.forces:
@@ -45,12 +62,17 @@ class UniformSquareMass(Mass):
 		return torqueSumVector
 
 	def update(self, t):
+		'''
+		Implements abstract method update
+		Updates the position and linear velocity, as well as rotation angle and angular speed of the object
+		after t time units pass from the current point in time
+		'''
 		acceleration = self.getForceSumVector()/self.mass
 
 		self.position = self.position + self.velocity*t + acceleration*t**2/2
 
 		self.velocity = self.velocity + acceleration*t
-		
+
 
 		angularAccelerationVal = abs(self.getTorqueSumVector())/self.momentOfInertia
 
@@ -59,6 +81,9 @@ class UniformSquareMass(Mass):
 		self.angularSpeed = self.angularSpeed + angularAccelerationVal*t
 
 	def canRotate(self):
+		'''
+		Implements abstract method canRotate
+		'''
 		return True
 
 

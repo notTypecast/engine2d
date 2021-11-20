@@ -20,7 +20,7 @@ if __name__ == "__main__":
 	b = UniformSquareMass(2, 5, Point(50, 50))
 	b.addForce(0, 5, 1, 1)
 	b.addForce(0, -5, 0, 1)
-	#b.addForce(0, 5, 0.5, 1)
+	b.addForce(0, 5, 0.5, 1)
 	plane.addMass(b)
 
 	updateFrequency = 20
