@@ -2,6 +2,8 @@ from src.Mass import Mass
 from src.Point import Point
 from src.Vector import Vector
 from src.ForceVector import ForceVector
+from src.VerticalToPlaneVector import VerticalToPlaneVector
+from math import sin, copysign
 
 class UniformSquareMass(Mass):
 
@@ -13,24 +15,32 @@ class UniformSquareMass(Mass):
 		self.side = side
 		self.momentOfInertia = side**4/12
 		self.rotationAngle = rotationAngle
-		self.angularVelocity = Vector(Point(0, 0))
-
-		self._updateCharRepr()
+		self.angularSpeed = 0
 
 	def addForce(self, x, y, xPercentageOnMass, yPercentageOnMass):
 		forceVector = ForceVector(Point(x, y), Point(xPercentageOnMass, yPercentageOnMass))
 		self.forces.append(forceVector)
 
 	def getTorqueSumVector(self):
-		torqueSumVector = Vector(Point(0, 0))
+		torqueSumVector = VerticalToPlaneVector(0)
 
 		for forceVector in self.forces:
-			#TODO: this is incorrect
-			#instead force must be split into x and y component and each must take distance from x and y center respectively
-			#also figure out way to represent only two directions for angular acceleration (clockwise and counter-clockwise)
-			#and cancel out the torque of two vectors with the opposite direction and the same ||
-			distanceFromCenter = (((forceVector.startXPercentage - .5)*self.side)**2 + ((forceVector.startYPercentage - .5)*self.side)**2)**.5
-			torqueSumVector = torqueSumVector + forceVector*distanceFromCenter
+			#positionVector: vector starting at the center of the square and ending at the start point of the force
+			positionVector = Vector(Point(forceVector.startXPercentage*self.side, forceVector.startYPercentage*self.side), 
+				Point(.5*self.side, .5*self.side))
+			#assume positive sign means counter-clockwise rotation
+			if abs(forceVector.y) > abs(forceVector.x):
+				if forceVector.startXPercentage < .5:
+					sign = copysign(1, forceVector.y)
+				else:
+					sign = -copysign(1, forceVector.y)
+			else:
+				if forceVector.startYPercentage < .5:
+					sign = -copysign(1, forceVector.x)
+				else:
+					sign = copysign(1, forceVector.x)
+
+			torqueSumVector = torqueSumVector + sign*abs(forceVector)*abs(positionVector)*sin(forceVector.getAngleWith(positionVector))
 
 		return torqueSumVector
 
@@ -40,25 +50,16 @@ class UniformSquareMass(Mass):
 		self.position = self.position + self.velocity*t + acceleration*t**2/2
 
 		self.velocity = self.velocity + acceleration*t
+		
 
+		angularAccelerationVal = abs(self.getTorqueSumVector())/self.momentOfInertia
 
-		angularAcceleration = self.getTorqueSumVector()/self.momentOfInertia
+		self.rotationAngle = self.rotationAngle + self.angularSpeed*t + angularAccelerationVal*t**2/2
 
-		self.rotationAngle = self.rotationAngle + abs(self.angularVelocity*t) + abs(angularAcceleration*t**2/2)
+		self.angularSpeed = self.angularSpeed + angularAccelerationVal*t
 
-		self.angularVelocity = self.angularVelocity + angularAcceleration*t
-
-
-		with open("test.txt", "a+") as f:
-			f.write(str(angularAcceleration) + "\n")
-
-		self._updateCharRepr()
-
-	def _updateCharRepr(self):
-		if 22.5 < abs(self.rotationAngle) % 100 < 72.5:
-			self.charRepr = self.SQUARE_ROT
-		else:
-			self.charRepr = self.SQUARE
+	def canRotate(self):
+		return True
 
 
 

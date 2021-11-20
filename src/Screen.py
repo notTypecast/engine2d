@@ -1,11 +1,16 @@
 from os import system, get_terminal_size
 from sys import stdout
+from src.Mass import Mass
+from src.PointMass import PointMass
+from src.UniformSquareMass import UniformSquareMass
 
 class Screen:
 	'''
 	Screen class
 	Represents the terminal window screen
 	'''
+
+	MASS_REPR = {Mass: "m", PointMass: "•", UniformSquareMass: ("■", "◆")}
 
 	#Matrix: RxC representing the screen, where R: rows and C: columns
 	#Each cell is a single character
@@ -36,7 +41,10 @@ class Screen:
 			X = int(mass.position.x)%len(self.matrix[0])
 			normalizedY = int(rowNormalizationFactor * mass.position.y%len(self.matrix))
 			if (0 <= X < len(self.matrix[0])) and (0 <= normalizedY < len(self.matrix)):
-				self.matrix[normalizedY][X] = mass.charRepr
+				if mass.canRotate():
+					self.matrix[normalizedY][X] = self.MASS_REPR[type(mass)][1 if 22.5 < mass.rotationAngle % 100 < 72.5 else 0]
+				else:
+					self.matrix[normalizedY][X] = self.MASS_REPR[type(mass)]
 
 
 	def show(self):

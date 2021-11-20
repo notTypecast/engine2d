@@ -8,3 +8,8 @@ class ForceVector(Vector):
 		self.y = endPoint.y
 		self.startXPercentage = startPoint.x
 		self.startYPercentage = startPoint.y
+
+
+	def getComponents(self):
+		return (ForceVector(Point(self.x, 0), Point(self.startXPercentage, self.startYPercentage)), 
+			ForceVector(Point(0, self.y), Point(self.startXPercentage, self.startYPercentage)))

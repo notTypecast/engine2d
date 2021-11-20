@@ -9,7 +9,6 @@ class Mass(metaclass = abc.ABCMeta):
 	Abstract class
 	Defines a new mass
 	'''
-	charRepr = "m"
 
 	def __init__(self, mass, position = Point(0, 0)):
 		self.forces = []
@@ -40,4 +39,8 @@ class Mass(metaclass = abc.ABCMeta):
 
 	@abc.abstractmethod
 	def update(self, t):
+		pass
+
+	@abc.abstractmethod
+	def canRotate(self):
 		pass
