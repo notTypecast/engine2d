@@ -13,6 +13,9 @@ class Point:
 		self.x = x
 		self.y = y
 
+	def asTuple(self):
+		return (self.x, self.y)
+
 	def __neg__(self):
 		'''
 		Defines the -P operator: (-x, -y)

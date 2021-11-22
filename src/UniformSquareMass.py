@@ -5,6 +5,8 @@ from src.ForceVector import ForceVector
 from src.VerticalToPlaneVector import VerticalToPlaneVector
 from math import sin, copysign
 
+
+#TODO: forces should keep their place on square when it rotates instead of staying stationary
 class UniformSquareMass(Mass):
 	'''
 	UniformSquareMass class, implements Mass

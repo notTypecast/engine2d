@@ -27,7 +27,9 @@ class Vector:
 		Returns angle of vector with vector other
 		w = arccos(A * B / (||A||*||B||))
 		'''
-		return acos(self*other / (abs(self)*abs(other)))
+		selfval = abs(self)
+		otherval = abs(other)
+		return 90 if selfval == 0 or otherval == 0 else acos(self*other / (abs(self)*abs(other)))
 
 	def __neg__(self):
 		'''
