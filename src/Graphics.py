@@ -6,7 +6,7 @@ from src.UniformSquareMass import UniformSquareMass
 
 class Graphics:
 
-	MASS_DRAW_FUNC = {Mass: None, PointMass: None, UniformSquareMass: None}
+	MASS_DRAW_FUNC = {PointMass: None, UniformSquareMass: None}
 
 	C_BLACK = (0, 0, 0)
 	C_WHITE = (255, 255, 255)
@@ -21,15 +21,15 @@ class Graphics:
 
 		pygame.init()
 		pygame.font.init()
+		pygame.display.set_caption("engine2d")
+		self.screen = pygame.display.set_mode([self.width, self.height])
 		self.clock = pygame.time.Clock()
 
-		Graphics.MASS_DRAW_FUNC[PointMass] = lambda mass: pygame.draw.circle(self.screen, Graphics.C_WHITE, mass.position.asTuple(), 4)
+		Graphics.MASS_DRAW_FUNC[PointMass] = lambda mass: pygame.draw.circle(self.screen, Graphics.C_WHITE, mass.position.asTuple(), 3)
 		Graphics.MASS_DRAW_FUNC[UniformSquareMass] = lambda mass: self.drawRotatedRect(self.screen, Graphics.C_WHITE, (*mass.position.asTuple(), mass.side, mass.side), mass.rotationAngle)
 
 
 	def start(self, updateInterval):
-		self.screen = pygame.display.set_mode([self.width, self.height])
-
 		while True:
 			for event in pygame.event.get():
 				if event == pygame.QUIT:
