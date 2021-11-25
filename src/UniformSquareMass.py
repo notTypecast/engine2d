@@ -3,7 +3,7 @@ from src.Point import Point
 from src.Vector import Vector
 from src.ForceVector import ForceVector
 from src.VerticalToPlaneVector import VerticalToPlaneVector
-from math import sin, copysign
+from math import sin, cos, copysign, radians
 
 
 #TODO: forces should keep their place on square when it rotates instead of staying stationary
@@ -36,6 +36,40 @@ class UniformSquareMass(Mass):
 		forceVector = ForceVector(Point(x, y), Point(xPercentageOnMass, yPercentageOnMass))
 		self.forces.append(forceVector)
 
+	def updateForces(self, byAngle):
+		angleSin = -sin(radians(byAngle))
+		angleCos = cos(radians(byAngle))
+
+		for force in self.forces:
+			force.update(force.x*angleCos - force.y*angleSin, force.x*angleSin + force.y*angleCos)
+
+	def getForceActPoint(self, forceVector):
+		for force in self.forces:
+			if force is forceVector:
+				rotationAngleSin = sin(radians(-self.rotationAngle))
+				rotationAngleCos = cos(radians(-self.rotationAngle))
+
+				x = self.position.x + force.startXPercentage*self.side
+				y = self.position.y + force.startYPercentage*self.side
+
+				pivotX = self.position.x + .5*self.side
+				pivotY = self.position.y + .5*self.side
+
+				x -= pivotX
+				y -= pivotY
+
+				rotatedX = x*rotationAngleCos - y*rotationAngleSin
+				rotatedY = x*rotationAngleSin + y*rotationAngleCos
+
+				rotatedX += pivotX
+				rotatedY += pivotY
+
+				return Point(rotatedX, rotatedY)
+
+		return None
+
+
+
 	def getTorqueSumVector(self):
 		'''
 		Returns a vector, representing the sum of all torques caused by forces on this object
@@ -43,18 +77,21 @@ class UniformSquareMass(Mass):
 		'''
 		torqueSumVector = VerticalToPlaneVector(0)
 
+		rotationAngleSin = sin(radians(self.rotationAngle))
+		rotationAngleCos = cos(radians(self.rotationAngle))
+
 		for forceVector in self.forces:
 			#positionVector: vector starting at the center of the square and ending at the start point of the force
-			positionVector = Vector(Point(forceVector.startXPercentage*self.side, forceVector.startYPercentage*self.side), 
-				Point(.5*self.side, .5*self.side))
+			forceActPoint = self.getForceActPoint(forceVector)
+			positionVector = Vector(forceActPoint - Point(self.position.x, self.position.y), Point(.5*self.side, .5*self.side))
 			#assume positive sign means counter-clockwise rotation
 			if abs(forceVector.y) > abs(forceVector.x):
-				if forceVector.startXPercentage < .5:
+				if forceActPoint.x - self.position.x < self.side/2:
 					sign = copysign(1, forceVector.y)
 				else:
 					sign = -copysign(1, forceVector.y)
 			else:
-				if forceVector.startYPercentage < .5:
+				if forceActPoint.y - self.position.y < self.side/2:
 					sign = -copysign(1, forceVector.x)
 				else:
 					sign = copysign(1, forceVector.x)
@@ -78,16 +115,21 @@ class UniformSquareMass(Mass):
 
 		angularAccelerationVal = abs(self.getTorqueSumVector())/self.momentOfInertia
 
-		self.rotationAngle = self.rotationAngle + self.angularSpeed*t + angularAccelerationVal*t**2/2
+		angleToAdd = self.angularSpeed*t + angularAccelerationVal*t**2/2
+
+		self.rotationAngle = self.rotationAngle + angleToAdd
 
 		self.angularSpeed = self.angularSpeed + angularAccelerationVal*t
+
+		self.updateForces(angleToAdd)
+
+		#print(self.getTorqueSumVector())
 
 	def canRotate(self):
 		'''
 		Implements abstract method canRotate
 		'''
 		return True
-
 
 
 

@@ -41,6 +41,10 @@ class Mass(metaclass = abc.ABCMeta):
 		'''
 		self.forces.clear()
 
+	@abc.abstractmethod
+	def getForceActPoint(self, forceVector):
+		pass
+
 	def setVelocity(self, x, y):
 		'''
 		Sets the current velocity of the mass to the given value, (x, y)

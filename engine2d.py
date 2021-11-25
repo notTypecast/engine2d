@@ -22,8 +22,8 @@ def cmd(plane):
 	system("clear")
 
 def graphics(plane):
-	g = Graphics((1280, 680), 60, plane, keepMassesOnScreen = True)
-	g.start(.1)
+	g = Graphics((1280, 680), 60, plane, keepMassesOnScreen = True, showForces = True)
+	g.start(.5)
 
 
 if __name__ == "__main__":
@@ -34,9 +34,10 @@ if __name__ == "__main__":
 	#a.addForce(-3, -3)
 	#plane.addMass(a)
 
-	b = UniformSquareMass(1, 50, Point(50, 50))
-	b.addForce(0, 1000, 1, 1)
-	b.addForce(0, -1000, 0, 1)
+	b = UniformSquareMass(50, 50, Point(500, 300))
+	b.addForce(0, 100, 1, 1)
+	#b.addForce(0, -10, .5, .5)
+	b.addForce(0, -100, 0, 1)
 	plane.addMass(b)
 
 	graphics(plane)

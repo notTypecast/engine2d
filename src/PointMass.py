@@ -25,3 +25,6 @@ class PointMass(Mass):
 		Implements abstract method canRotate
 		'''
 		return False
+
+	def getForceActPoint(self, forceVector):
+		return None

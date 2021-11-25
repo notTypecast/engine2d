@@ -12,13 +12,12 @@ class ForceVector(Vector):
 		Constructor
 		Initializes a new force vector, pointing towards endPoint and acting
 		on startPoint on the object
-		The coordinates of startPoint represent percentages on the mass
+		Both endPoint and startPoint are relative, meaning 
 		'''
 		self.x = endPoint.x
 		self.y = endPoint.y
 		self.startXPercentage = startPoint.x
 		self.startYPercentage = startPoint.y
-
 
 	def getComponents(self):
 		'''

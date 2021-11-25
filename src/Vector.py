@@ -15,7 +15,7 @@ class Vector:
 		self.x = endPoint.x - startPoint.x
 		self.y = endPoint.y - startPoint.y
 
-	def update(x, y):
+	def update(self, x, y):
 		'''
 		Updates the coordinates of the Vector to (x, y)
 		'''
@@ -24,7 +24,7 @@ class Vector:
 
 	def getAngleWith(self, other):
 		'''
-		Returns angle of vector with vector other
+		Returns angle of vector with vector other in radians
 		w = arccos(A * B / (||A||*||B||))
 		'''
 		selfval = abs(self)
