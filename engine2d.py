@@ -35,9 +35,15 @@ if __name__ == "__main__":
 	#plane.addMass(a)
 
 	b = UniformSquareMass(50, 50, Point(500, 300))
-	b.addForce(0, 100, 1, 1)
-	#b.addForce(0, -10, .5, .5)
-	b.addForce(0, -100, 0, 1)
+	b.setAngularSpeed(1)
+	#b.addForce(0, 100, 1, 1)
+	#b.addForce(0, -200, .5, .5)
+	#b.addForce(0, 100, 0, 1)
+	b.addForce(-100, -100, 0.3, 0)
+	b.addForce(100, 100, 0.7, 0)
+	b.addForce(-100, -100, 0, 0.3)
+	b.addForce(101, 101, 0, 0.8)
+	#b.addForce(100, 100, 0.5, 0.5)
 	plane.addMass(b)
 
 	graphics(plane)

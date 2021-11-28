@@ -3,7 +3,8 @@ from src.Mass import Mass
 from src.PointMass import PointMass
 from src.UniformSquareMass import UniformSquareMass
 from src.Point import Point
-from math import isclose, sqrt
+from src.Vector import Vector
+from math import isclose, sqrt, degrees, pi
 
 
 class Graphics:
@@ -14,6 +15,11 @@ class Graphics:
 	C_WHITE = (255, 255, 255)
 	C_RED = (255, 0, 0)
 	C_GREEN = (0, 255, 0)
+
+	j = Vector(Point(1, 0))
+	i = Vector(Point(0, 1))
+
+	VECTOR_ARROW = None
 
 	def __init__(self, res, fps, plane, keepMassesOnScreen = False, showForces = False):
 		self.width = res[0]
@@ -33,6 +39,7 @@ class Graphics:
 		Graphics.MASS_DRAW_FUNC[PointMass] = lambda mass: pygame.draw.circle(self.screen, Graphics.C_WHITE, mass.position.asTuple(), 3)
 		Graphics.MASS_DRAW_FUNC[UniformSquareMass] = lambda mass: self.drawRotatedRect(self.screen, Graphics.C_WHITE, (*mass.position.asTuple(), mass.side, mass.side), mass.rotationAngle)
 
+		Graphics.VECTOR_ARROW = pygame.image.load("ast/VectorArrow.png")
 
 	def start(self, updateInterval):
 		while True:
@@ -46,8 +53,10 @@ class Graphics:
 			self.screen.fill(Graphics.C_BLACK)
 
 			for mass in self.plane.masses:
+				#draw mass
 				Graphics.MASS_DRAW_FUNC[type(mass)](mass)
 							
+				#draw force vectors
 				if self.showForces:
 					for force in mass.forces:
 						startPoint = mass.getForceActPoint(force)
@@ -55,6 +64,7 @@ class Graphics:
 							endPoint = Point(startPoint.x + force.x, startPoint.y + force.y)
 							pygame.draw.line(self.screen, Graphics.C_RED, startPoint.asTuple(), endPoint.asTuple(), 2)
 							pygame.draw.circle(self.screen, Graphics.C_RED, startPoint.asTuple(), 2)
+							self.blitRotatedImage(Graphics.VECTOR_ARROW, degrees(force.getAngleWith(-Graphics.i))*(-1 if force.getAngleWith(Graphics.j) < pi/2 else 1), endPoint)
 
 
 			pygame.display.flip()
@@ -108,6 +118,12 @@ class Graphics:
 		return (endPoint.asTuple(), (a1, b1), (a2, b2))
 	'''
 
+	def blitRotatedImage(self, img, angle, point):
+		rotatedImage = pygame.transform.rotate(img, angle)
+		newRect = rotatedImage.get_rect(center = img.get_rect(center = (point.x, point.y)).center)
+
+		self.screen.blit(rotatedImage, newRect)
+
 
 	@staticmethod
 	def drawRotatedRect(surface, color, position, angle):
@@ -119,3 +135,5 @@ class Graphics:
 		s = pygame.transform.rotate(s, angle)
 		newRect = s.get_rect(center = (position[0] + position[2]/2, position[1] + position[3]/2))
 		surface.blit(s, newRect)
+
+	

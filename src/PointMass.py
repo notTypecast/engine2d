@@ -20,6 +20,9 @@ class PointMass(Mass):
 
 		self.velocity = self.velocity + acceleration*t
 
+	def getCenterPoint(self):
+		return self.position
+
 	def canRotate(self):
 		'''
 		Implements abstract method canRotate

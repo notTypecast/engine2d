@@ -84,21 +84,34 @@ class UniformSquareMass(Mass):
 			#positionVector: vector starting at the center of the square and ending at the start point of the force
 			forceActPoint = self.getForceActPoint(forceVector)
 			positionVector = Vector(forceActPoint - Point(self.position.x, self.position.y), Point(.5*self.side, .5*self.side))
-			#assume positive sign means counter-clockwise rotation
-			if abs(forceVector.y) > abs(forceVector.x):
-				if forceActPoint.x - self.position.x < self.side/2:
-					sign = copysign(1, forceVector.y)
-				else:
-					sign = -copysign(1, forceVector.y)
-			else:
-				if forceActPoint.y - self.position.y < self.side/2:
-					sign = -copysign(1, forceVector.x)
-				else:
-					sign = copysign(1, forceVector.x)
 
-			torqueSumVector = torqueSumVector + sign*abs(forceVector)*abs(positionVector)*sin(forceVector.getAngleWith(positionVector))
+			components = forceVector.getComponents()
+
+			#assume positive sign means counter-clockwise rotation
+			#split force into components and get torque for each component
+			if forceActPoint.y - self.position.y < self.side/2:
+				signx = -copysign(1, forceVector.x)
+			else:
+				signx = copysign(1, forceVector.x)
+
+			if forceActPoint.x - self.position.x < self.side/2:
+				signy = copysign(1, forceVector.y)
+			else:
+				signy = -copysign(1, forceVector.y)	
+
+			posVectorVal = abs(positionVector)
+			torqueSumVector = torqueSumVector + signx*abs(components[0].x)*posVectorVal*sin(components[0].getAngleWith(positionVector)) + signy*abs(components[1].y)*posVectorVal*sin(components[1].getAngleWith(positionVector))
 
 		return torqueSumVector
+
+	def setAngularSpeed(self, angularSpeed):
+		'''
+		Sets the current angular speed to the given value
+		'''
+		self.angularSpeed = angularSpeed
+
+	def addAngularSpeed(self, angularSpeed):
+		self.angularSpeed += angularSpeed
 
 	def update(self, t):
 		'''
@@ -124,6 +137,9 @@ class UniformSquareMass(Mass):
 		self.updateForces(angleToAdd)
 
 		#print(self.getTorqueSumVector())
+
+	def getCenterPoint(self):
+		return Point(self.position.x + self.side/2, self.position.y + self.side/2)
 
 	def canRotate(self):
 		'''

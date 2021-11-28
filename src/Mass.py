@@ -42,6 +42,10 @@ class Mass(metaclass = abc.ABCMeta):
 		self.forces.clear()
 
 	@abc.abstractmethod
+	def getCenterPoint(self):
+		pass
+
+	@abc.abstractmethod
 	def getForceActPoint(self, forceVector):
 		pass
 
